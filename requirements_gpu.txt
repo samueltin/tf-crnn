@@ -1,0 +1,9 @@
+imageio==2.3.0
+opencv-python==3.4.1.15
+tensorboard==1.7.0
+tensorflow-gpu==1.7.0
+tqdm==4.23.3
+better-exceptions==0.2.1
+sacred==0.7.3
+click
+pandas
