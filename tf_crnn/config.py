@@ -38,7 +38,8 @@ class Alphabet:
 
             self._alphabet_units = list(lookup_alphabet.keys())
             self._codes = list(lookup_alphabet.values())
-            self._nclasses = max(self.codes) + 1  # n_classes should be + 1 of labels codes
+            #self._nclasses = max(self.codes) + 1  # n_classes should be + 1 of labels codes
+            self._nclasses = max(self.codes) + 2
 
     def check_input_file_alphabet(self, csv_filenames: List[str],
                                   discarded_chars: str=';|{}'.format(string.whitespace[1:]),
