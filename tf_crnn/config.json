@@ -1,0 +1,27 @@
+{
+    "csv_delimiter": ";",
+    "csv_files_eval": null,
+    "csv_files_train": null,
+    "input_shape": [
+        32,
+        100
+    ],
+    "lookup_alphabet_file": "",
+    "num_beam_paths": 2,
+    "num_gpus": 1,
+    "output_model_dir": null,
+    "restore_model": true,
+    "seed": 560471347,
+    "string_split_delimiter": "|",
+    "training_params": {
+        "eval_batch_size": 128,
+        "evaluate_every_epoch": 5,
+        "learning_decay_rate": 0.96,
+        "learning_decay_steps": 1000,
+        "learning_rate": 0.0001,
+        "n_epochs": 50,
+        "optimizer": "adam",
+        "save_interval": 1000.0,
+        "train_batch_size": 64
+    }
+}

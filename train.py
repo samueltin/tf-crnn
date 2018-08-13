@@ -40,7 +40,7 @@ def default_config():
     input_shape = (32, 100)
     num_beam_paths = 2
     training_params = TrainingParams().to_dict()
-    restore_model = False
+    restore_model = True
     csv_delimiter = ';'
     string_split_delimiter = '|'
     
