@@ -127,7 +127,7 @@ def run(csv_files_train: List[str], csv_files_eval: List[str], output_model_dir:
 
     predictResults=estimator.predict(input_fn=data_loader(csv_filename='/Users/samueltin/Projects/sf/sf-image-generator/output/Test/sample.csv',
                                             params=parameters,
-                                            batch_size=128,
+                                            batch_size=1,
                                             num_epochs=1,
                                             data_augmentation=False,
                                             image_summaries=False

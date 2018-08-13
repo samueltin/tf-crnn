@@ -242,11 +242,13 @@ def crnn_fn(features, labels, mode, params):
     n_pools = CONST.DIMENSION_REDUCTION_W_POOLING  # 2x2 pooling in dimension W on layer 1 and 2
     seq_len_inputs = tf.divide(features['images_widths'], n_pools, name='seq_len_input_op') - 1
 
+    predict_dict = {}
     predictions_dict = {'prob': logprob,
                         # 'raw_predictions': raw_pred,
                         }
     try:
         predictions_dict['filenames'] = features['filenames']
+        predict_dict['filenames'] = features['filenames']
     except KeyError:
         pass
 
@@ -335,6 +337,7 @@ def crnn_fn(features, labels, mode, params):
 
             pred_chars = table_int2str.lookup(sparse_code_pred[0])
             predictions_dict['words'] = get_words_from_chars(pred_chars.values, sequence_lengths=sequence_lengths_pred)
+            predict_dict['words'] = get_words_from_chars(pred_chars.values, sequence_lengths=sequence_lengths_pred)
             predictions_dict['codes'] = tf.sparse_to_dense(sparse_indices=sparse_code_pred[0].indices,
                                                            output_shape=sparse_code_pred[0].dense_shape,
                                                            sparse_values=sparse_code_pred[0].values)
@@ -359,6 +362,7 @@ def crnn_fn(features, labels, mode, params):
         # Score : around 10.0 -> seems pretty sure, less than 5.0 bit unsure, some errors/challenging images
         predictions_dict['score'] = tf.subtract(log_probability_ctc[:, 0], log_probability_ctc[:, 1],
                                                 name='score_computation')
+        predict_dict['score'] = tf.subtract(log_probability_ctc[:, 0], log_probability_ctc[:, 1])
 
         # Logprobs ctc decoding :
         predictions_dict['logprob_ctc'] = log_probability_ctc
@@ -386,13 +390,37 @@ def crnn_fn(features, labels, mode, params):
 
     export_outputs = {'predictions': tf.estimator.export.PredictOutput(predictions_dict)}
 
-    return tf.estimator.EstimatorSpec(
-        mode=mode,
-        predictions=predictions_dict,
-        loss=loss_ctc,
-        train_op=train_op,
-        eval_metric_ops=eval_metric_ops,
-        export_outputs=export_outputs,
-        scaffold=tf.train.Scaffold()
-        # scaffold=tf.train.Scaffold(init_fn=None)  # Specify init_fn to restore from previous model
-    )
+    # return tf.estimator.EstimatorSpec(
+    #     mode=mode,
+    #     predictions=predictions_dict,
+    #     loss=loss_ctc,
+    #     train_op=train_op,
+    #     eval_metric_ops=eval_metric_ops,
+    #     export_outputs=export_outputs,
+    #     scaffold=tf.train.Scaffold()
+    #     # scaffold=tf.train.Scaffold(init_fn=None)  # Specify init_fn to restore from previous model
+    # )
+
+    if mode == tf.estimator.ModeKeys.PREDICT:
+        return tf.estimator.EstimatorSpec(
+            mode=mode,
+            predictions=predict_dict,
+            loss=loss_ctc,
+            train_op=train_op,
+            eval_metric_ops=eval_metric_ops,
+            export_outputs=export_outputs,
+            scaffold=tf.train.Scaffold()
+            # scaffold=tf.train.Scaffold(init_fn=None)  # Specify init_fn to restore from previous model
+        )
+    else:
+        return tf.estimator.EstimatorSpec(
+            mode=mode,
+            predictions=predictions_dict,
+            loss=loss_ctc,
+            train_op=train_op,
+            eval_metric_ops=eval_metric_ops,
+            export_outputs=export_outputs,
+            scaffold=tf.train.Scaffold()
+            # scaffold=tf.train.Scaffold(init_fn=None)  # Specify init_fn to restore from previous model
+        )
+
